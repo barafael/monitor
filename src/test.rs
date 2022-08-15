@@ -9,7 +9,7 @@ use tokio_util::sync::CancellationToken;
 
 use crate::{Monitor, Source};
 
-struct Sensor(u8);
+pub struct Sensor(u8);
 
 #[async_trait]
 impl Source<u8> for Sensor {

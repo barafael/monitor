@@ -22,9 +22,9 @@ impl Source<String> for Client {
 
     async fn next(&mut self) -> Result<String, Self::Error> {
         if let Some(Ok(msg)) = self.reader.next().await {
-            return Ok(format!("{msg:?}"));
+            Ok(format!("{msg:?}"))
         } else {
-            return Err(anyhow::Error::msg("drained"));
+            Err(anyhow::Error::msg("drained"))
         }
     }
 }

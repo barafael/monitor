@@ -19,7 +19,7 @@ where
         It: IntoIterator<IntoIter = I, Item = I::Item>,
     {
         let it = it.into_iter().fuse();
-        LastRepeatIter { it, next: None }
+        Self { it, next: None }
     }
 }
 
@@ -32,7 +32,7 @@ where
 
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(next) = self.it.next() {
-            self.next = Some(next)
+            self.next = Some(next);
         }
 
         self.next.clone()

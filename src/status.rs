@@ -7,15 +7,15 @@ pub enum Status {
 
 impl Status {
     pub fn up(&mut self) {
-        *self = Status::Up;
+        *self = Self::Up;
     }
 
     pub fn down(&mut self, msg: &str) {
-        if *self == Status::Up {
+        if *self == Self::Up {
             log::warn!("{msg}");
         } else {
             log::info!("{msg}");
         }
-        *self = Status::Down;
+        *self = Self::Down;
     }
 }

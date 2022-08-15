@@ -13,6 +13,9 @@ mod status;
 #[cfg(test)]
 mod test;
 
+mod variant_1;
+mod variant_2;
+
 pub use crate::source::Source;
 
 impl<T, E: Send + 'static> Monitor<E> for T where T: Source<E> {}
