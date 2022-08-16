@@ -98,7 +98,7 @@ async fn backs_off() {
             unreachable!()
         }
     });
-    let (hdl, _ensure) = tokio::try_join!(hdl, ensure_no_recv).unwrap();
+    let (hdl, ()) = tokio::try_join!(hdl, ensure_no_recv).unwrap();
     hdl.unwrap();
     assert_eq!(12, INIT_COUNTER.load(Ordering::SeqCst));
 }

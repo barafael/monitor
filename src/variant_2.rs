@@ -1,4 +1,4 @@
-use std::{fmt::Debug, time::Duration};
+use std::time::Duration;
 
 use async_trait::async_trait;
 use tokio::{sync::broadcast, time::sleep};
@@ -7,25 +7,28 @@ use tokio_util::sync::CancellationToken;
 pub use crate::source::Source;
 
 #[async_trait]
-pub trait Monitor<Event: Send, Err> {
+pub trait Monitor<Event: Send> {
+    type Error;
+
     async fn until_cancel(
         sender: broadcast::Sender<Event>,
         token: CancellationToken,
-    ) -> Result<(), Err>;
+    ) -> Result<(), Self::Error>;
     async fn forever(sender: broadcast::Sender<Event>) -> std::convert::Infallible;
 }
 
 #[async_trait]
-impl<T, Event> Monitor<Event, T::Error> for T
+impl<T, Event> Monitor<Event> for T
 where
     T: Source<Event> + Send + 'static,
-    T::Error: Debug + Send,
     Event: Send + 'static,
 {
+    type Error = <T as Source<Event>>::Error;
+
     async fn until_cancel(
         sender: broadcast::Sender<Event>,
         token: CancellationToken,
-    ) -> Result<(), T::Error> {
+    ) -> Result<(), Self::Error> {
         tokio::select! {
             _ = token.cancelled() => {
                 Ok(())
