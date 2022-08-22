@@ -11,6 +11,7 @@ async-trait = "0.1.57"
 futures-util = "0.3.21"
 log = "0.4.17"
 simple_logger = "2.2.0"
+thiserror = "1.0.32"
 tokio = { version = "1.20.1", features = ["full"] }
 tokio-util = { version = "0.7.3", features = ["full"] }
 
