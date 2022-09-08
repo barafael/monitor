@@ -43,14 +43,14 @@ impl Iterator for ExpBackoff {
 async fn main() -> anyhow::Result<()> {
     simple_logger::init_with_level(log::Level::Info).unwrap();
 
-    let (sender, mut receiver) = broadcast::channel(16);
+    let (tx, mut rx) = broadcast::channel(16);
     tokio::join!(
         async move {
-            while let Ok(msg) = receiver.recv().await {
+            while let Ok(msg) = rx.recv().await {
                 println!("{msg}");
             }
         },
-        Client::forever(sender, ExpBackoff(Duration::from_millis(10)))
+        Client::forever(tx, ExpBackoff(Duration::from_millis(10)))
     );
     Ok(())
 }

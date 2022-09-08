@@ -11,13 +11,13 @@ pub trait Monitor<Event: Send> {
     type Error;
 
     async fn until_cancel(
-        sender: broadcast::Sender<Event>,
+        tx: broadcast::Sender<Event>,
         token: CancellationToken,
         backoff: impl Iterator<Item = Duration> + Send + Clone,
     ) -> Result<(), Self::Error>;
 
     async fn forever(
-        sender: tokio::sync::broadcast::Sender<Event>,
+        tx: tokio::sync::broadcast::Sender<Event>,
         backoff_duration: impl Iterator<Item = Duration> + Send + Clone,
     ) -> std::convert::Infallible;
 }
@@ -31,7 +31,7 @@ where
     type Error = <T as Source<Event>>::Error;
 
     async fn until_cancel(
-        sender: broadcast::Sender<Event>,
+        tx: broadcast::Sender<Event>,
         token: CancellationToken,
         backoff_duration: impl Iterator<Item = Duration> + Send + Clone,
     ) -> Result<(), Self::Error> {
@@ -39,14 +39,14 @@ where
             _ = token.cancelled() => {
                 Ok(())
             },
-            _ = Self::forever(sender, backoff_duration) => {
+            _ = Self::forever(tx, backoff_duration) => {
                 Ok(())
             }
         }
     }
 
     async fn forever(
-        sender: broadcast::Sender<Event>,
+        tx: broadcast::Sender<Event>,
         backoff: impl Iterator<Item = Duration> + Send + Clone,
     ) -> std::convert::Infallible {
         let mut backoff_provider = LastRepeatIter::new(backoff.clone());
@@ -68,7 +68,7 @@ where
             'next: loop {
                 let err = match instance.next().await {
                     Ok(data) => {
-                        sender.send(data).ok();
+                        tx.send(data).ok();
                         continue 'next;
                     }
                     Err(e) => e,
