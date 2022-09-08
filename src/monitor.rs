@@ -4,7 +4,19 @@ use async_trait::async_trait;
 use tokio::{sync::broadcast, time::sleep};
 use tokio_util::sync::CancellationToken;
 
-use crate::{repeat_last::LastRepeatIter, status::Status, Source};
+use crate::{repeat_last::LastRepeatIter, status::Status, Source, Watchdog};
+
+#[allow(unused)]
+#[derive(Clone, Debug, Default, derive_builder::Builder)]
+pub struct Config<I>
+where
+    I: Iterator<Item = Duration> + Send + Clone,
+{
+    token: Option<CancellationToken>,
+    watchdog: Option<Watchdog>,
+    backoff: Option<I>,
+    teardown_delay: Option<Duration>,
+}
 
 #[async_trait]
 pub trait Monitor<Event: Send> {

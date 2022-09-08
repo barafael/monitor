@@ -18,6 +18,7 @@ pub struct Reset;
 pub struct Elapsed;
 
 /// Watchdog holding the fixed duration.
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Watchdog {
     /// The timeout interval.
     duration: Duration,
