@@ -68,7 +68,7 @@ where
             'next: loop {
                 let err = match instance.next().await {
                     Ok(data) => {
-                        drop(sender.send(data));
+                        sender.send(data).ok();
                         continue 'next;
                     }
                     Err(e) => e,
